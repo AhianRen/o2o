@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
+</head>
+<body>
+    <form name="form1" id="form1">
+        <!--areaName:<input type="text" name="areaName" id="areaName">
+        priority:<input type="text" name="priority">-->
+        <input type="file" name="file" id="file">
+        <input type="button" value="submit">
+        <span></span>
+    </form>
+</body>
+
+<script>
+    $(function () {
+        var form = document.getElementById("form1");
+
+        $("input[type='button']").click(function () {
+            var fd = new FormData(form);
+           // fd.append("file",$("#file")[0].files[0]);
+            $.ajax({
+                url:"/o2o/up",
+                type:"post",
+                data:fd,
+                processData:false,
+                contentType:false,
+                success:function (data) {
+                    $("span").text(data);
+                }
+            })
+        })
+
+
+
+
+    })
+</script>
+</html>
