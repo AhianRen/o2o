@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageUtil {
-    public static String generateThumbnail(MultipartFile file,String path){
+    public static String generateThumbnail(MultipartFile file,String path) throws Exception{
         makeDir(path);
         String extension = getFileExtension(file.getOriginalFilename());
         String relativePath = path + FileUtil.getRandomFileName() + extension;

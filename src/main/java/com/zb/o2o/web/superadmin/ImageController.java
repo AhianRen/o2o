@@ -1,7 +1,6 @@
 package com.zb.o2o.web.superadmin;
 
 import com.zb.o2o.util.FileUtil;
-import com.zb.o2o.util.ImageUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +27,8 @@ public class ImageController {
             e.printStackTrace();
         }*/
         String shopImgPath = FileUtil.getShopImgPath(1);
-        String s = ImageUtil.generateThumbnail(file, shopImgPath);
-        System.out.println(s);
+      //  String s = ImageUtil.generateThumbnail(file, shopImgPath);
+        //System.out.println(s);
 
 
         return "OK";

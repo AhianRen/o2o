@@ -23,7 +23,6 @@ public class AreaController {
     @RequestMapping(value = "/listarea",method = RequestMethod.GET)
     @ResponseBody
     private Map<String,Object> listareas(){
-        logger.info("=========atart=======");
         long startTime = System.currentTimeMillis();
         Map<String,Object> modelMap = new HashMap<>();
         try {
@@ -31,14 +30,10 @@ public class AreaController {
             modelMap.put("rows",areaList);
             modelMap.put("total",areaList.size());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("listareas错误：" + e.getMessage());
             modelMap.put("success",false);
             modelMap.put("errMsg",e.toString());
         }
-        logger.error("test error");
-        long endTime = System.currentTimeMillis();
-        logger.debug("costTime:[{}ms]",endTime-startTime);
-        logger.info("=======end============");
         return modelMap;
     }
 }
