@@ -14,6 +14,10 @@ $(function () {
             $("#shop-area").html(tempAreaHtml);
         }
     });
+    $("#kaptcha_img").click(function () {
+        changeVerifyCode(this);
+    });
+
 
     $("#submit").click(function () {
         var shop = {};
@@ -35,7 +39,12 @@ $(function () {
         var formdata = new FormData();
         formdata.append("shopStr",JSON.stringify(shop));
         formdata.append("shopImg",$("#shop-img")[0].files[0]);
-
+        var verifyCode = $("#kaptcha").val();
+        if (!verifyCode){
+            $.toast('请输入验证码');
+            return;
+        }
+        formdata.append("verifyCode",verifyCode);
         $.ajax({
             url:"/o2o/shop/registershop",
             data:formdata,
