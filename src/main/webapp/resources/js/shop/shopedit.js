@@ -53,12 +53,13 @@ $(function () {
             processData:false,
             success:function (data) {
                 if(data.success){
-                   //alert("ok");
                     $.toast('提交成功');
                 }else {
-                 // alert("false");
-                   $.toast('提交失败');
+                   $.toast(data.errMsg);
                 }
+            },
+            error:function (xhr) {
+                $.toast(xhr.status + "错误");
             }
         });
 

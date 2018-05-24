@@ -2,11 +2,15 @@ package com.zb.o2o.web.shop;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.code.kaptcha.Constants;
+import com.zb.o2o.dto.ShopExecution;
 import com.zb.o2o.entity.Area;
+import com.zb.o2o.entity.PersonInfo;
 import com.zb.o2o.entity.Shop;
 import com.zb.o2o.entity.ShopCategory;
+import com.zb.o2o.enums.ShopStateEnum;
 import com.zb.o2o.service.AreaService;
 import com.zb.o2o.service.ShopCategoryService;
+import com.zb.o2o.service.ShopService;
 import com.zb.o2o.util.AttributesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +35,8 @@ public class ShopManagementController {
     private ShopCategoryService shopCategoryService;
     @Autowired
     private AreaService areaService;
+    @Autowired
+    private ShopService shopService;
 
     @RequestMapping(path = "/getshopinitinfo",method = RequestMethod.GET)
     @ResponseBody
@@ -55,43 +61,36 @@ public class ShopManagementController {
 
     @RequestMapping(value = "/registershop",method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> registerShop(@RequestParam("shopStr") String shopStr,
-                                           @RequestParam("verifyCode") String verifyCode,
-                                           @RequestParam(value = "shopImg",required = false) MultipartFile file
+    public Map<String,Object> registerShop(@RequestParam(value = "shopStr",required = true) String shopStr,
+                                           @RequestParam(value = "verifyCode",required = true) String verifyCode,
+                                           @RequestParam(value = "shopImg",required = true) MultipartFile file
                                             ){
 
         Map<String,Object> modelMap = new HashMap<>();
-        /*if (shopStr == null){
+        String verifyCodeExpected = (String)AttributesUtil.getSessionAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if(!verifyCodeExpected.toLowerCase().equals(verifyCode)){
             modelMap.put("success",false);
-            modelMap.put("errMsg","商铺信息不能为空");
+            modelMap.put("errMsg","验证码错误");
+            return modelMap;
         }
-        if(file == null){
+        Shop shop = JSONObject.parseObject(shopStr,Shop.class);
+        if (shop == null){
             modelMap.put("success",false);
-            modelMap.put("errMsg","上传图片不能为空");
-        }*/
-
-
+            modelMap.put("errMsg","店铺信息填写错误");
+            return modelMap;
+        }
         //应该从session获取
-        //PersonInfo personInfo = new PersonInfo();
-        //personInfo.setUserId(1l);
-        //shop.setOwner(personInfo);
+        PersonInfo personInfo = new PersonInfo();
+        personInfo.setUserId(1l);
+        shop.setOwner(personInfo);
 
-        try {
-            System.out.println("====" + shopStr);
-            //HttpServletRequest request = AttributesUtil.getRequest();
-           // String verifyCodeExpected = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
-            String verifyCodeExpected = (String)AttributesUtil.getSessionAttribute(Constants.KAPTCHA_SESSION_KEY);
-            System.out.println("期望的验证码"+verifyCodeExpected);
-            System.out.println(verifyCode);
-            Shop shop = JSONObject.parseObject(shopStr,Shop.class);
-            System.out.println("name" + shop.getShopName()+shop.getShopAddr());
-//            System.out.println(file.getOriginalFilename() + file.getSize());
-        } catch (Exception e) {
-            e.printStackTrace();
+        ShopExecution shopExecution = shopService.addShop(shop, file);
+        if (shopExecution==null || shopExecution.getState() != ShopStateEnum.CHECK.getState()){
+            modelMap.put("success",false);
+            modelMap.put("errMsg","店铺注册错误");
+            return modelMap;
         }
-
         modelMap.put("success",true);
-
         return  modelMap;
     }
 
